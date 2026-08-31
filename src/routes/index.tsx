@@ -31,5 +31,19 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".name-reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          entry.target.classList.toggle("is-visible", entry.isIntersecting);
+        }
+      },
+      { threshold: 0.3 },
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return <div dangerouslySetInnerHTML={{ __html: portfolioHtml }} />;
 }
