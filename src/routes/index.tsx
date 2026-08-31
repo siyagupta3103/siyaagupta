@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { portfolioHtml } from "@/content/portfolio-html";
 
 const title = "Siya Gupta — Full-Stack Developer & Cybersecurity";
