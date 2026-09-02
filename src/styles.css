@@ -41,3 +41,23 @@
     transition: none;
   }
 }
+
+/* Enhanced lift + glow for CGPA/info boxes */
+.cgpa-box {
+  transition: transform .35s cubic-bezier(.22,1,.36,1), border-color .35s ease, background-color .35s ease, box-shadow .35s ease;
+}
+.cgpa-box:hover {
+  transform: translateY(-8px);
+  border-color: color-mix(in oklab, var(--foreground) 70%, var(--border));
+  background-color: color-mix(in oklab, var(--foreground) 5%, transparent);
+  box-shadow: 0 22px 50px -18px rgba(255,255,255,.18), 0 10px 24px -12px rgba(255,255,255,.12), 0 0 0 1px color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+.cgpa-box:active {
+  transform: translateY(-3px) scale(.99);
+}
+@media (max-width:640px) {
+  .cgpa-box:hover { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .cgpa-box { transition: none; }
+}
