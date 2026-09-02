@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { portfolioHtml } from "@/content/portfolio-html";
 
 const title = "Siya Gupta — Full-Stack Developer & Cybersecurity";
@@ -31,19 +31,69 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [showTop, setShowTop] = useState(false);
+  const topBtnRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
-    const els = document.querySelectorAll(".name-reveal");
+    // Reveal animations for names and section elements
+    const revealEls = document.querySelectorAll(".name-reveal, .reveal");
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           entry.target.classList.toggle("is-visible", entry.isIntersecting);
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.15, rootMargin: "0px 0px -50px 0px" },
     );
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+
+    revealEls.forEach((el) => {
+      const delay = (el as HTMLElement).style.transitionDelay;
+      if (delay) {
+        (el as HTMLElement).style.setProperty("--reveal-delay", delay);
+      }
+      observer.observe(el);
+    });
+
+    // Back-to-top visibility
+    const onScroll = () => setShowTop(window.scrollY > 600);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
-  return <div dangerouslySetInnerHTML={{ __html: portfolioHtml }} />;
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <>
+      <div dangerouslySetInnerHTML={{ __html: portfolioHtml }} />
+      <button
+        ref={topBtnRef}
+        type="button"
+        aria-label="Back to top"
+        onClick={scrollToTop}
+        className={`back-to-top ${showTop ? "is-visible" : ""}`}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m18 15-6-6-6 6" />
+        </svg>
+      </button>
+    </>
+  );
 }
