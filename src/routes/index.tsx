@@ -36,7 +36,6 @@ function Index() {
 
   useEffect(() => {
     // Reveal animations for names and section elements
-    const revealEls = document.querySelectorAll(".name-reveal, .reveal");
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -46,13 +45,24 @@ function Index() {
       { threshold: 0.1, rootMargin: "0px 0px -20px 0px" },
     );
 
-    revealEls.forEach((el) => {
-      const delay = (el as HTMLElement).style.transitionDelay;
-      if (delay) {
-        (el as HTMLElement).style.setProperty("--reveal-delay", delay);
-      }
-      observer.observe(el);
-    });
+    // Re-observe whenever React re-renders the raw HTML container,
+    // since replaced nodes detach from the observer.
+    const observeAll = () => {
+      document.querySelectorAll(".name-reveal, .reveal").forEach((el) => {
+        const delay = (el as HTMLElement).style.transitionDelay;
+        if (delay) {
+          (el as HTMLElement).style.setProperty("--reveal-delay", delay);
+        }
+        observer.observe(el);
+      });
+    };
+    observeAll();
+
+    const container = document.getElementById("portfolio-root");
+    const mutation = new MutationObserver(observeAll);
+    if (container) {
+      mutation.observe(container, { childList: true, subtree: true });
+    }
 
     // Back-to-top visibility
     const onScroll = () => setShowTop(window.scrollY > 600);
