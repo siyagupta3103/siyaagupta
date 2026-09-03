@@ -71,6 +71,7 @@ function Index() {
 
     return () => {
       observer.disconnect();
+      mutation.disconnect();
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
@@ -81,7 +82,7 @@ function Index() {
 
   return (
     <>
-      <div dangerouslySetInnerHTML={{ __html: portfolioHtml }} />
+      <div id="portfolio-root" dangerouslySetInnerHTML={{ __html: portfolioHtml }} />
       <button
         ref={topBtnRef}
         type="button"
